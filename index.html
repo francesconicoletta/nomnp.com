@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang=en>
+	<head>
+		<title>nomnp</title>
+		<meta charset=utf-8>
+		<meta name=Description content="My rants on technology">
+		<link rel="icon" href="data:,">
+	</head>
+<body><code><pre>
+<b>nomnp</b>
+
+================================================================================
+
+I'm a Computer Science student in Torino, Italy.
+Advocator of minimalism, UNIX philosophy, free software and liberty in any
+shape or form.
+	Simplicity is prerequisite for reliability.
+	- Edsger W. Dijkstra
+
+<b>contact info:</b>
+	email: [ echo "ZnJhbmNlc2Nvbmljb2xldHRhQG5vbW5wLmNvbQo=" | base64 -d ]
+	github: [ <a href=https://github.com/francesconicoletta>https://github.com/francesconicoletta</a> ]
+
+<b>articles:</b>
+	20210424 [ <a href=#omp>Multithreading: first steps with OpenMP.</a> ]
+	20210214 [ <a href=#websites>I prefer simple websites.</a> ]
+
+================================================================================
+
+<b><a id="omp"># Multithreading: first steps with OpenMP.</a></b> [ <a href=plaintext/omp>Plain text version</a> ]
+
+OpenMP (Open Multi-Processing) is an API that provides an easy and standardized
+method to achieve parallel programming in C, C++ and Fortran.
+
+In this article I'll use C/C++. The syntax for Fortran is a bit different, but
+the concepts are the same.
+OpenMP directives are specified with the #pragma mechanism provided by the C
+standard for passing additional information to the compiler.
+
+In C and C++
+
+	#include &#60;omp.h&#62;
+
+is needed for using OpenMP functions (not for pragmas) and additional compiler
+parameters may be required depending on the compiler. For example:
+
+	gcc -fopenmp
+
+DISCLAIMER: this article is not documentation or a guide, it only covers the
+most basic examples. I'll leave some useful links at the end of the page if you
+want to know more.
+
+An OpenMP program begins using only one thread, called initial thread, and
+executes the program sequentially.
+When the initial thread reaches a parallel construct
+
+	#pragma omp parallel
+	{
+
+	}
+
+it creates a team of threads and becomes the primary thread of the new team.
+Each thread of the team executes the code inside the parallel construct.
+There is an implicit barrier at the end of the code block, after which only the
+primary thread continues the execution beyond the end of the parallel construct.
+
+                                 __________
+                                /          \    <-------
+                               /            \           \
+primary thread --->  ==================================  ----- parallel threads
+                              ^\            /^          /
+                              | \__________/ |  <-------
+                              |              |
+                        beginning of         |
+                        the parallel         |
+                        region               |
+                                             |
+                                       end of the
+                                       parallel region
+
+Threads communicate by sharing variables. By default all variables are shared
+between threads except for the loop iteration counter.
+Local variables for each thread can be created by setting them private:
+
+	int variable_name;
+	#pragma omp parallel private(variable_name)
+	{
+	/* variable_name values aren't shared between threads */
+	}
+
+OpenMP uses different ways to synchronize threads:
+
+	#pragma omp /* clause goes here */
+
+- critical: the code block will be executed by only one thread at a time.
+- atomic: the memory update in the next instruction will be performed
+	atomically. It does not make the entire statement atomic.
+- ordered: the structured block is executed in the order in which iterations
+	would be executed in a sequential loop.
+- barrier: each thread waits until all of the other threads of a team have
+	reached this point.
+- nowait: specifies that threads completing assigned work can proceed without
+	waiting for all threads in the team to finish.
+
+Some useful links if you want to learn more:
+Wikipedia: [ <a href=https://en.wikipedia.org/wiki/OpenMP>https://en.wikipedia.org/wiki/OpenMP</a> ]
+OpenMP API specifications: [ <a href=https://www.openmp.org/specifications>https://www.openmp.org/specifications</a> ]
+
+================================================================================
+
+<b><a id="websites"># I prefer simple websites.</a></b> [ <a href=plaintext/websites>Plain text version</a> ]
+
+I recently came across a few particularly bad websites that were literally
+unusable. Cookie popups that force you to accept or deselect every option one
+by one, huge bars at the top or bottom of the page, newsletter popups,
+monstrously big text constrained in a small centered column, and so on.
+
+All these horrible things sparked in me the idea of writing about what I like
+and don't like, on a "simple" website (or at least one that I consider simple),
+focused only on content and without distractions. Thus nomnp was born.
+</pre></code></body>
+</html>
