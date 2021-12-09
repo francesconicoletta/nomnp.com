@@ -65,11 +65,11 @@ There is an implicit barrier at the end of the code block, after which only the
 primary thread continues the execution beyond the end of the parallel construct.
 
                                  __________
-                                /          \    <-------
+                                /          \    &#60;-------
                                /            \           \
-primary thread --->  ==================================  ----- parallel threads
+primary thread ---&#62;  ==================================  ----- parallel threads
                               ^\            /^          /
-                              | \__________/ |  <-------
+                              | \__________/ |  &#60;-------
                               |              |
                         beginning of         |
                         the parallel         |
