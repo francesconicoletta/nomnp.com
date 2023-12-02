@@ -1,0 +1,30 @@
+Instructions to replicate my multiuser brew setup on macOS, since brew doesn't
+support multiple accounts on the same Mac very well. This assumes you already
+have brew installed.
+
+ 1. System Settings -> Users & Groups -> Add Account
+ 2. Create standard account "brew"
+ 3. System Settings -> Users & Groups -> Add Account
+ 4. Select "group" from the drop-down menu and create a group named "brew"
+ 5. System Settings -> Users & Groups -> Click 'i' on the "brew" group
+ 6. Add your personal, business, brew users to the "brew" group
+ 7. sudo chown -R brew:admin /opt/homebrew
+ 8. sudo dscl . create /Users/brew IsHidden 1
+ 9. sudo chflags hidden /Users/brew
+10. sudo visudo
+11. Add "%brew ALL = (brew) NOPASSWD: /opt/homebrew/bin/brew" (without quotes)
+    at the end of the file.
+12. echo 'brewhelper() { pushd -q /Users/brew;sudo -Hu brew /opt/homebrew/bin/brew $@;popd -q; }' | \
+    tee ~/.zshrc | sudo -Hu <business> tee /Users/<business>/.zshrc
+13. echo 'alias brew="brewhelper $@"' | \
+    tee ~/.zshrc | sudo -Hu <business> tee /Users/<business>/.zshrc
+14. echo 'export PATH=$PATH:/opt/homebrew/bin' | \
+    tee ~/.zshenv | sudo -Hu <business> tee /Users/<business>/.zshenv
+15. source ~/.zshrc ~/.zshenv
+16. sudo chown <business>:staff /Users/<business>/.zshrc /Users/<business>/.zshenv
+17. echo 'export PATH=/opt/homebrew/bin:$PATH' >> /Users/brew/.zshrc
+    We don't care if brew has write permissions on its .zshrc.
+18. Optionally change your personal account's home permissions to remove read
+    access to your business and brew user. The function on step 13 is needed to
+    make this work if the brew user doesn't have read permissions on the
+    current PWD.

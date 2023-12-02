@@ -1,0 +1,12 @@
+Instructions to boot an OpenBSD virtual machine on UTM.
+
+1. "Create a New Virtual Machine"
+2. "Virtualize"
+3. "Other"
+4. "Skip ISO boot"
+5. "Open VM settings"
+6. "Drives" -> "New" -> "Import..." -> "installxx.img"
+
+Optional, for versions <= 7.3
+7. Type "set tty fb0" at "boot>" if you want to use the framebuffer console.
+8. "echo 'set tty fb0' > /etc/boot.conf" to render this change persistent.

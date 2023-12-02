@@ -1,0 +1,76 @@
+Multithreading: first steps with OpenMP.
+
+OpenMP (Open Multi-Processing) is an API that provides an easy and
+standardized method to achieve parallel programming in C, C++ and
+Fortran.  I'll use C in this article.
+OpenMP directives are specified with the "#pragma" mechanism provided by
+the C standard for passing additional information to the compiler.
+
+	#include <omp.h>
+
+is needed for using OpenMP functions and additional compiler parameters may be
+required depending on the compiler. For example:
+
+	gcc -fopenmp
+
+DISCLAIMER: this article is not documentation or a guide, it only covers
+the most basic examples. I'll leave some useful links at the end of the
+page if you want to know more.
+
+An OpenMP program begins using only one thread, called initial thread,
+and executes the program sequentially.
+When the initial thread reaches a parallel construct
+
+	#pragma omp parallel
+	{
+	
+	}
+
+it creates a team of threads and becomes the primary thread of the new
+team. Each thread of the team executes the code inside the parallel
+construct.
+There is an implicit barrier at the end of the code block, after which
+only the primary thread continues the execution beyond the end of the
+parallel construct.
+
+                          __________
+                         /          \    <-------
+primary                 /            \           \      parallel
+ thread --->  ==================================  ----- threads
+                       ^\            /^          /
+                       | \__________/ |  <-------
+                       |              |
+                 beginning of         |
+                 the parallel         |
+                 region               |
+                                end of the
+                                parallel region
+
+Threads communicate by sharing variables. By default all variables are
+shared between threads except for the loop iteration counter.
+Local variables for each thread can be created by setting them private:
+
+	int variable_name;
+	#pragma omp parallel private(variable_name)
+	{
+	/* variable_name values aren't shared between threads */
+	}
+
+OpenMP uses different ways to synchronize threads:
+
+	#pragma omp /* clause goes here */
+
+- critical: the code block will be executed by only one thread at a
+  time.
+- atomic: the memory update in the next instruction will be performed
+  atomically. It does not make the entire statement atomic.
+- ordered: the structured block is executed in the order in which
+  iterations would be executed in a sequential loop.
+- barrier: each thread waits until all of the other threads of a team
+  have reached this point.
+- nowait: specifies that threads completing assigned work can proceed
+  without waiting for all threads in the team to finish.
+
+Some useful links if you want to learn more:
+Wikipedia: https://en.wikipedia.org/wiki/OpenMP
+OpenMP API specifications: https://www.openmp.org/specifications/

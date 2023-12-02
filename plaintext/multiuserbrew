@@ -1,0 +1,28 @@
+UPDATE: the original guide described a method that used a mix of
+administrator (personal) and standard (work, brew) accounts to better
+separate permissions. That setup had a lot of edge cases where things
+didn't work well, mainly when brew needed root permissions to install or
+remove something outside its /opt/homebrew directory. You can still
+check this older version at nomnp.com/plaintext/oldmultiuserbrew. This
+new version should work but you won't really have any separation between
+users besides macOS' defaults.
+
+ 1. System Settings -> Users & Groups -> Add Account
+ 2. Create Administrator account "brew"
+ 3. System Settings -> Users & Groups -> Add Account
+ 4. Select "group" from the drop-down menu and create a group named
+    "brew"
+ 5. System Settings -> Users & Groups -> Click 'i' on the "brew" group
+ 6. Add your personal, work, brew users to the "brew" group
+ 7. sudo chown -R brew:admin /opt/homebrew
+ 8. sudo dscl . create /Users/brew IsHidden 1
+ 9. sudo chflags hidden /Users/brew
+10. sudo visudo
+11. Add "%brew ALL = (brew) NOPASSWD: /opt/homebrew/bin/brew" (without
+    quotes) at the end of the file.
+12. echo 'alias brew='sudo -Hu brew /opt/homebrew/bin/brew $@' \
+    tee ~/.zshrc | sudo -Hu <work> tee /Users/<business>/.zshrc
+13. echo 'export PATH=$PATH:/opt/homebrew/bin' | \
+    tee ~/.zshenv | sudo -Hu <work> tee /Users/<work>/.zshenv
+14. source ~/.zshrc ~/.zshenv
+15. echo 'export PATH=/opt/homebrew/bin:$PATH' >> /Users/brew/.zshrc
