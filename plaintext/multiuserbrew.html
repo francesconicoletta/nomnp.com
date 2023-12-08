@@ -1,3 +1,4 @@
+<!doctype html><html lang=en><head><title>Multi user brew setup on macOS.</title><meta charset=utf-8><link rel="icon" href="data:,"></head><body><pre><code>
 UPDATE: the original guide described a method that used a mix of
 administrator (personal) and standard (work, brew) accounts to better
 separate permissions. That setup had a lot of edge cases where things
@@ -26,3 +27,4 @@ users besides macOS' defaults.
     tee ~/.zshenv | sudo -Hu <work> tee /Users/<work>/.zshenv
 14. source ~/.zshrc ~/.zshenv
 15. echo 'export PATH=/opt/homebrew/bin:$PATH' >> /Users/brew/.zshrc
+</code></pre></body></html>
